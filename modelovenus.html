@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carregar Modelo 3D</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    // Importa as bibliotecas necessárias do Three.js
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js';
+    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/controls/OrbitControls.js';
+
+    // Configuração básica da cena
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Adicionar luz à cena
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(10, 10, 10);
+    scene.add(light);
+
+    // Controles para interagir com o modelo
+    const controls = new OrbitControls(camera, renderer.domElement);
+
+    // Carregar o modelo GLB usando o link direto
+    const loader = new GLTFLoader();
+    loader.load(
+      'https://raw.githubusercontent.com/sissol2000/SisSol/main/Venussurface_1_12103.glb', // Link direto do GitHub
+      (gltf) => {
+        scene.add(gltf.scene); // Adiciona o modelo à cena
+        gltf.scene.position.set(0, 0, 0); // Posiciona o modelo
+      },
+      undefined,
+      (error) => {
+        console.error('Erro ao carregar o modelo:', error);
+      }
+    );
+
+    // Posicionar a câmera
+    camera.position.set(0, 1, 5);
+
+    // Função de renderização
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Ajustar o tamanho da tela ao redimensionar
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
